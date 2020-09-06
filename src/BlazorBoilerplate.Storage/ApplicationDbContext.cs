@@ -25,6 +25,7 @@ namespace BlazorBoilerplate.Storage
         public DbSet<Message> Messages { get; set; }
         public DbSet<Tenant> Tenants { get; set; }
         private IUserSession _userSession { get; set; }
+        public DbSet<DbLog> Logs { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, IUserSession userSession) : base(options)
         {
@@ -48,6 +49,13 @@ namespace BlazorBoilerplate.Storage
             modelBuilder.ShadowProperties();
 
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<DbLog>()
+                .HasKey(d => d.Id)
+                .IsClustered(false);
+            modelBuilder.Entity<DbLog>()
+                .HasIndex(d => d.TimeStamp)
+                .IsClustered(true);
 
             modelBuilder.Entity<Message>().ToTable("Messages");
 
